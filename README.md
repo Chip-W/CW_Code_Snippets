@@ -1,4 +1,9 @@
 # CW_Code_Snippets
+**NOTE**
+<br>
+These snippets are what work for my community server.  They may need to be tweaked a little to work for yours.
+<br>
+I only supply these snippets to help others.  I do not guarantee they will work for you as they do for me.
 <br><br>
 # ESX_ADVANCEDFUEL EMERGENCY FUEL SNIPPET
 THIS SCRIPT ADD FUEL POINTS AT ALL POLICE STATIONS THAT CAN ONLY BE USED BY ANY VEHICLE WITH THE "FLAG_LAW_ENFORCEMENT"
