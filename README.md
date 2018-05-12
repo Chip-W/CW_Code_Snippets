@@ -18,3 +18,7 @@ NAMES ABOVE THE PUMPS DON'T WORK AS THERE APPEARS TO BE A HARD LIMIT TO HOW MANY
 <br><br>
 # CUSTOM ESX_MENU CSS FILE
 See [image](https://media.discordapp.net/attachments/349481476481482752/429406436926423060/20180330173809_1.jpg?width=890&height=501)
+
+# esx_truckshop policejob support
+This snippet is for the policejob to recognize the "owned_trucks" table and provide a result when using the vehicle interaction menu as an officer.
+One little bug is that it will quickly display the owner's name and then switch to "Unknown".  Just use your controller's back button or backspace one time to view the owner name.
