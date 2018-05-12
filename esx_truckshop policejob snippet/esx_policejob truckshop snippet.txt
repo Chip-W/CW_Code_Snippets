@@ -1,0 +1,314 @@
+--==========SERVER/MAIN.LUA==========--
+
+-- FIND --
+
+ESX.RegisterServerCallback('esx_policejob:getVehicleInfos', function(source, cb, plate)
+
+  if Config.EnableESXIdentity then
+
+    MySQL.Async.fetchAll(
+      'SELECT * FROM owned_vehicles',
+      {},
+      function(result)
+
+        local foundIdentifier = nil
+
+        for i=1, #result, 1 do
+
+          local vehicleData = json.decode(result[i].vehicle)
+
+          if vehicleData.plate == plate then
+            foundIdentifier = result[i].owner
+            break
+          end
+
+        end
+
+        if foundIdentifier ~= nil then
+
+          MySQL.Async.fetchAll(
+            'SELECT * FROM users WHERE identifier = @identifier',
+            {
+              ['@identifier'] = foundIdentifier
+            },
+            function(result)
+
+              local ownerName = result[1].firstname .. " " .. result[1].lastname
+
+              local infos = {
+                plate = plate,
+                owner = ownerName
+              }
+
+              cb(infos)
+
+            end
+          )
+
+        else
+
+          local infos = {
+          plate = plate
+          }
+
+          cb(infos)
+
+        end
+
+      end
+    )
+
+  else
+
+    MySQL.Async.fetchAll(
+      'SELECT * FROM owned_vehicles',
+      {},
+      function(result)
+
+        local foundIdentifier = nil
+
+        for i=1, #result, 1 do
+
+          local vehicleData = json.decode(result[i].vehicle)
+
+          if vehicleData.plate == plate then
+            foundIdentifier = result[i].owner
+            break
+          end
+
+        end
+
+        if foundIdentifier ~= nil then
+
+          MySQL.Async.fetchAll(
+            'SELECT * FROM users WHERE identifier = @identifier',
+            {
+              ['@identifier'] = foundIdentifier
+            },
+            function(result)
+
+              local infos = {
+                plate = plate,
+                owner = result[1].name
+              }
+
+              cb(infos)
+
+            end
+          )
+
+        else
+
+          local infos = {
+          plate = plate
+          }
+
+          cb(infos)
+
+        end
+
+      end
+    )
+
+  end
+
+end)
+
+
+-- ADD BELOW --
+
+
+ESX.RegisterServerCallback('esx_policejob:getTruckInfos', function(source, cb, plate)
+
+  if Config.EnableESXIdentity then
+
+    MySQL.Async.fetchAll(
+      'SELECT * FROM owned_trucks',
+      {},
+      function(result)
+
+        local foundIdentifier = nil
+
+        for i=1, #result, 1 do
+
+          local vehicleData = json.decode(result[i].vehicle)
+
+          if vehicleData.plate == plate then
+            foundIdentifier = result[i].owner
+            break
+          end
+
+        end
+
+        if foundIdentifier ~= nil then
+
+          MySQL.Async.fetchAll(
+            'SELECT * FROM users WHERE identifier = @identifier',
+            {
+              ['@identifier'] = foundIdentifier
+            },
+            function(result)
+
+              local ownerName = result[1].firstname .. " " .. result[1].lastname
+
+              local infos = {
+                plate = plate,
+                owner = ownerName
+              }
+
+              cb(infos)
+
+            end
+          )
+
+        else
+
+          local infos = {
+          plate = plate
+          }
+
+          cb(infos)
+
+        end
+
+      end
+    )
+
+  else
+
+    MySQL.Async.fetchAll(
+      'SELECT * FROM owned_trucks',
+      {},
+      function(result)
+
+        local foundIdentifier = nil
+
+        for i=1, #result, 1 do
+
+          local vehicleData = json.decode(result[i].vehicle)
+
+          if vehicleData.plate == plate then
+            foundIdentifier = result[i].owner
+            break
+          end
+
+        end
+
+        if foundIdentifier ~= nil then
+
+          MySQL.Async.fetchAll(
+            'SELECT * FROM users WHERE identifier = @identifier',
+            {
+              ['@identifier'] = foundIdentifier
+            },
+            function(result)
+
+              local infos = {
+                plate = plate,
+                owner = result[1].name
+              }
+
+              cb(infos)
+
+            end
+          )
+
+        else
+
+          local infos = {
+          plate = plate
+          }
+
+          cb(infos)
+
+        end
+
+      end
+    )
+
+  end
+
+end)
+
+
+
+
+--==========CLIENT/MAIN.LUA==========--
+
+-- FIND --
+
+if data2.current.value == 'vehicle_infos' then
+  OpenVehicleInfosMenu(vehicleData)
+end
+
+-- ADD BELOW --
+
+if data2.current.value == 'truck_infos' then
+  OpenVehicleInfosMenu(vehicleData)
+end
+
+
+
+-- FIND --
+
+function OpenVehicleInfosMenu(vehicleData)
+
+  ESX.TriggerServerCallback('esx_policejob:getVehicleInfos', function(infos)
+
+    local elements = {}
+
+    table.insert(elements, {label = _U('plate') .. infos.plate, value = nil})
+
+    if infos.owner == nil then
+      table.insert(elements, {label = _U('owner_unknown'), value = nil})
+    else
+      table.insert(elements, {label = _U('owner') .. infos.owner, value = nil})
+    end
+
+    ESX.UI.Menu.Open(
+      'default', GetCurrentResourceName(), 'vehicle_infos',
+      {
+        title    = _U('vehicle_info'),
+        align    = 'bottom-right',
+        elements = elements,
+      },
+      nil,
+      function(data, menu)
+        menu.close()
+      end
+    )
+
+  end, vehicleData.plate)
+
+
+-- ADD BELOW --
+
+  ESX.TriggerServerCallback('esx_policejob:getTruckInfos', function(infos)
+
+    local elements = {}
+
+    table.insert(elements, {label = _U('plate') .. infos.plate, value = nil})
+
+    if infos.owner == nil then
+      table.insert(elements, {label = _U('owner_unknown'), value = nil})
+    else
+      table.insert(elements, {label = _U('owner') .. infos.owner, value = nil})
+    end
+
+    ESX.UI.Menu.Open(
+      'default', GetCurrentResourceName(), 'truck_infos',
+      {
+        title    = _U('vehicle_info'),
+        align    = 'bottom-right',
+        elements = elements,
+      },
+      nil,
+      function(data, menu)
+        menu.close()
+      end
+    )
+
+  end, vehicleData.plate)
+
+-- DO NOT ADD BELOW THE FUNCTION "END" --
+end
